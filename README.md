@@ -1,55 +1,48 @@
-# Skybyte API
+# Skybyte API – DevOps Challenge Submission
 
-A small Python service that returns a greeting. Runs in Kubernetes via Helm.
+## Overview
 
-> **Note:** the engineer who set this up is no longer with the team. Some of this README may be out of date. **The challenge brief is in [`CHALLENGE.md`](./CHALLENGE.md) — start there.**
+This project is a containerized Python service deployed on Kubernetes using Helm, Terraform, and GitHub Actions CI/CD pipeline.
 
-## Prerequisites
+It demonstrates:
+- Kubernetes security hardening
+- Policy-as-code (Kyverno)
+- Observability with Prometheus metrics
+- Infrastructure as Code (Terraform)
+- CI/CD validation pipeline
 
-- Docker Desktop (or any Docker engine)
-- A local Kubernetes cluster (Minikube or Kind)
-- Helm 3.x
-- Terraform 1.5+
-- Python 3.9+ (for running tests locally)
+---
 
-## Quick start
+## Application
 
-```bash
-./setup.sh
-```
+- Language: Python (Flask)
+- Endpoint: `/`
+- Health: `/health`
+- Readiness: `/ready`
+- Metrics: `/metrics`
 
-This script will build the image, apply Terraform, and install the Helm chart.
+Example response:
 
-To verify the deployment:
+```json
+{"message":"Hello, Candidate","version":"1.0.0"}
 
-```bash
-kubectl -n devops-challenge get pods
-kubectl -n devops-challenge port-forward svc/skybyte-app 8080:80
-curl http://localhost:8080/
-# expected: {"message": "Hello, Candidate", "version": "1.0.0"}
-```
 
 ## Architecture
 
-```
-[Client] ──► [Service:80] ──► [Pod:appuser:80]
-```
+Client → Kubernetes Service (ClusterIP) → Pod (non-root container)
 
-The pod runs as a non-root user (appuser) and listens on port 80. Health checks are wired to `/healthz`.
+The application is accessed internally using Kubernetes DNS:
 
-## CI
+http://skybyte-app:8080
 
-GitHub Actions runs lint, helm lint, terraform validate, and a Docker build on every push. See `.github/workflows/ci.yml`.
+or
 
-## Layout
+http://skybyte-app.devops-challenge.svc.cluster.local:8080
 
-```
-/
-├── app/                  Python service
-├── Dockerfile
-├── helm/skybyte-app/     Helm chart
-├── terraform/            Namespace + ResourceQuota + secret
-├── .github/workflows/    CI
-├── setup.sh
-└── CHALLENGE.md          ← read this
-```
+## SLO (Service Level Objective)
+
+99% of requests to `/` should complete in under 200ms over a rolling 7-day window.
+
+This ensures the service remains responsive under normal Kubernetes cluster load and during deployments.
+
+We use Prometheus metrics from `/metrics` endpoint to monitor this.
