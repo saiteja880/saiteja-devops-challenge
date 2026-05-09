@@ -33,3 +33,4 @@ terraform/.terraform.lock.hcl
 # Hiring team only — must NEVER be pushed to the candidate-facing template repo
 INTERVIEWER_NOTES.md
 INTERVIEWER/
+bin/
