@@ -78,8 +78,8 @@ jobs:
       # ---------------- Kyverno policy test ----------------
       - name: Install Kyverno CLI
         run: |
-          curl -L https://github.com/kyverno/kyverno/releases/latest/download/kyverno-cli-linux-amd64.tar.gz | tar xz
-          sudo mv kyverno /usr/local/bin
-
+          wget https://github.com/kyverno/kyverno/releases/download/v1.15.2/kyverno-cli_v1.15.2_linux_x86_64.tar.gz
+          tar -xzf kyverno-cli_v1.15.2_linux_x86_64.tar.gz
+          sudo mv kyverno /usr/local/bin/
       - name: Validate policies against manifests
         run: kyverno apply policies/ -r rendered.yaml || true
