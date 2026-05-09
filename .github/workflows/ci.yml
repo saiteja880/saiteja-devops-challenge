@@ -68,7 +68,7 @@ jobs:
       - name: Install Trivy
         run: |
           wget -qO- https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh
-
+          sudo mv ./bin/trivy /usr/local/bin/trivy
       - name: Scan filesystem
         run: trivy fs .
 
